@@ -1,7 +1,7 @@
-package com.example.demo.service;
+package com.example.demo.forum.service;
 
-import com.example.demo.domain.Post;
-import com.example.demo.repository.ForumPostRepository;
+import com.example.demo.domain.forum.Post;
+import com.example.demo.repository.forum.ForumPostRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +17,11 @@ public class ForumPostService {
     public ForumPostService(ForumPostRepository forumPostRepository) {
         this.forumPostRepository = forumPostRepository;
     }
+
+    public List<Post> searchPosts(String query) {
+    return forumPostRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(query, query);
+    }
+
 
     public Post createPost(String title, String content, String username) {
         Post post = new Post();

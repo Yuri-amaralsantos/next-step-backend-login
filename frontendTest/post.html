@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Details</title>
+    <script>
+        async function loadPost() {
+            const params = new URLSearchParams(window.location.search);
+            const postId = params.get("id");
+            const TOKEN = localStorage.getItem("token");
+
+            if (!TOKEN) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/forum/posts/${postId}`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${TOKEN}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to load post");
+                }
+
+                const post = await response.json();
+                document.getElementById("post-title").innerText = post.title;
+                document.getElementById("post-content").innerText = post.content;
+                document.getElementById("post-author").innerText = `Posted by: ${post.username}`;
+                document.getElementById("post-date").innerText = `Created at: ${new Date(post.createdAt).toLocaleString()}`;
+            } catch (error) {
+                console.error("Error loading post:", error);
+            }
+        }
+
+        window.onload = loadPost;
+    </script>
+</head>
+
+<body>
+    <h1 id="post-title"></h1>
+    <p id="post-content"></p>
+    <p id="post-author"></p>
+    <p id="post-date"></p>
+
+    <button onclick="window.location.href='index.html'">Back to Forum</button>
+</body>
+
+</html>

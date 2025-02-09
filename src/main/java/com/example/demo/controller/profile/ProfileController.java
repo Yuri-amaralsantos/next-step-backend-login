@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.demo.controller.profile;
 
 import com.example.demo.domain.user.User;
 import com.example.demo.domain.user.Category;

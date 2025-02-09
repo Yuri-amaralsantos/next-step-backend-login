@@ -1,4 +1,4 @@
-package com.example.demo.domain;
+package com.example.demo.domain.forum;
 
 import jakarta.persistence.*;
 import java.util.Date;
