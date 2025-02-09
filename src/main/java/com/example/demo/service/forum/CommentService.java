@@ -2,9 +2,9 @@ package com.example.demo.service.forum;  // Ensure this package matches your fol
 
 import com.example.demo.domain.forum.Comment;  // Ensure Comment model exists
 import com.example.demo.domain.forum.Post;  // Ensure Post model exists
-import com.example.demo.forum.repository.CommentRepository;
 import com.example.demo.forum.service.ForumPostService;
 
+import com.example.demo.repository.forum.CommentRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 

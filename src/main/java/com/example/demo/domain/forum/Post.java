@@ -13,8 +13,7 @@ public class Post {
 
     private String title;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     private String username;
@@ -22,7 +21,6 @@ public class Post {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt = new Date();
 
-    // Constructors
     public Post() {
     }
 
@@ -34,45 +32,15 @@ public class Post {
         this.createdAt = createdAt;
     }
 
-    // Getters
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public String getTitle() { return title; }
+    public String getContent() { return content; }
+    public String getUsername() { return username; }
+    public Date getCreatedAt() { return createdAt; }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    // Setters
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+    public void setId(Long id) { this.id = id; }
+    public void setTitle(String title) { this.title = title; }
+    public void setContent(String content) { this.content = content; }
+    public void setUsername(String username) { this.username = username; }
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
 }
