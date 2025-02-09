@@ -1,61 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Post Detail</title>
-    <script>
-      async function loadPost() {
-        const params = new URLSearchParams(window.location.search);
-        const postId = params.get("id");
-        const TOKEN = localStorage.getItem("token");
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Post Detail</title>
+  <script>
+    let postId;
+    const TOKEN = localStorage.getItem("token");
 
-        if (!TOKEN) {
-          window.location.href = "login.html";
-          return;
-        }
+    if (!TOKEN) {
+      window.location.href = "login.html";
+    }
 
-        try {
-          const response = await fetch(
-            `http://localhost:8080/api/forum/posts/${postId}`,
-            {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${TOKEN}`,
-              },
-            }
-          );
+    async function loadPost() {
+      const params = new URLSearchParams(window.location.search);
+      postId = params.get("id");
 
-          if (!response.ok) {
-            throw new Error("Failed to load post");
-          }
+      try {
+        const response = await fetch(`http://localhost:8080/api/forum/posts/${postId}`, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${TOKEN}` },
+        });
 
-          const post = await response.json();
-          document.getElementById("post-title").innerText = post.title;
-          document.getElementById("post-content").innerText = post.content;
-          document.getElementById(
-            "post-author"
-          ).innerText = `Posted by: ${post.username}`;
-          document.getElementById(
-            "post-date"
-          ).innerText = `Created at: ${new Date(
-            post.createdAt
-          ).toLocaleString()}`;
-        } catch (error) {
-          console.error("Error loading post:", error);
-        }
+        if (!response.ok) throw new Error("Failed to load post");
+
+        const post = await response.json();
+        document.getElementById("post-title").innerText = post.title;
+        document.getElementById("post-content").innerText = post.content;
+        document.getElementById("post-author").innerText = `Posted by: ${post.username}`;
+        document.getElementById("post-date").innerText = `Created at: ${new Date(post.createdAt).toLocaleString()}`;
+
+        loadComments();
+      } catch (error) {
+        console.error("Error loading post:", error);
       }
+    }
 
-      window.onload = loadPost;
-    </script>
-  </head>
+    async function loadComments() {
+      try {
+        const response = await fetch(`http://localhost:8080/api/forum/posts/${postId}/comments`, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${TOKEN}` },
+        });
 
-  <body>
-    <h1 id="post-title"></h1>
-    <p id="post-content"></p>
-    <p id="post-author"></p>
-    <p id="post-date"></p>
+        if (!response.ok) throw new Error("Failed to load comments");
 
-    <button onclick="window.location.href='forum.html'">Back to Forum</button>
-  </body>
+        const comments = await response.json();
+        const commentsList = document.getElementById("comments-list");
+        commentsList.innerHTML = "";
+        comments.forEach((comment) => {
+          const li = document.createElement("li");
+          li.innerHTML = `<strong>${comment.username}</strong>: ${comment.content} <br> <small>${new Date(comment.createdAt).toLocaleString()}</small>`;
+          commentsList.appendChild(li);
+        });
+      } catch (error) {
+        console.error("Error loading comments:", error);
+      }
+    }
+
+    async function addComment(event) {
+      event.preventDefault();
+      const content = document.getElementById("comment-text").value;
+
+      if (!content.trim()) return alert("Comment cannot be empty");
+
+      try {
+        const response = await fetch(`http://localhost:8080/api/forum/posts/${postId}/comments`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${TOKEN}`,
+          },
+          body: JSON.stringify({ content }),
+        });
+
+        if (!response.ok) throw new Error("Failed to add comment");
+
+        document.getElementById("comment-text").value = "";
+        loadComments();
+      } catch (error) {
+        console.error("Error adding comment:", error);
+      }
+    }
+
+    window.onload = loadPost;
+  </script>
+</head>
+
+<body>
+<h1 id="post-title"></h1>
+<p id="post-content"></p>
+<p id="post-author"></p>
+<p id="post-date"></p>
+
+<h2>Comments</h2>
+<ul id="comments-list"></ul>
+
+<form id="comment-form" onsubmit="addComment(event)">
+  <textarea id="comment-text" placeholder="Write a comment..." required></textarea>
+  <br />
+  <button type="submit">Add Comment</button>
+</form>
+
+<button onclick="window.location.href='forum.html'">Back to Forum</button>
+</body>
 </html>
