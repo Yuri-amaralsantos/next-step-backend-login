@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <script>
+        // Define the API endpoint for registration.
+        const API_URL = "http://localhost:8080/api/auth/register";
+
+        // Toggles all category checkboxes when "Select All" is clicked.
+        function toggleSelectAll(source) {
+            const checkboxes = document.querySelectorAll('input[name="categories"]');
+            checkboxes.forEach((checkbox) => checkbox.checked = source.checked);
+        }
+
+        // Handles the registration process.
+        async function register() {
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            // Get all checked category checkboxes and build an array of their values.
+            const checkedBoxes = document.querySelectorAll('input[name="categories"]:checked');
+            const categories = Array.from(checkedBoxes).map(cb => cb.value);
+
+            if (!username || !password) {
+                alert("Please enter a username and password.");
+                return;
+            }
+
+            // Send the registration payload to the backend.
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                // Note: We use "name" to match the backend expectation (or adjust as needed).
+                body: JSON.stringify({ username, email, password, categories })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert("Registration successful! Please log in.");
+                window.location.href = "login.html";
+            } else {
+                alert(result.error || "Registration failed.");
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Register</h1>
+    <div>
+        <label for="username">Username:</label>
+        <input type="text" id="username" placeholder="Username" />
+    </div>
+    <div>
+        <label for="email">Email:</label>
+        <input type="text" id="email" placeholder="Email" />
+    </div>
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" placeholder="Password" />
+    </div>
+    <div>
+        <h3>Select Categories</h3>
+        <!-- Select All option -->
+        <div>
+            <input type="checkbox" id="select-all" onclick="toggleSelectAll(this)" />
+            <label for="select-all"><strong>Select All</strong></label>
+        </div>
+        <!-- Individual category checkboxes -->
+        <div>
+            <input type="checkbox" id="cat-TECHNOLOGY" name="categories" value="TECHNOLOGY" />
+            <label for="cat-TECHNOLOGY">Technology</label>
+        </div>
+        <div>
+            <input type="checkbox" id="cat-SCIENCE" name="categories" value="SCIENCE" />
+            <label for="cat-SCIENCE">Science</label>
+        </div>
+        <div>
+            <input type="checkbox" id="cat-ART" name="categories" value="ART" />
+            <label for="cat-ART">Art</label>
+        </div>
+        <div>
+            <input type="checkbox" id="cat-MUSIC" name="categories" value="MUSIC" />
+            <label for="cat-MUSIC">Music</label>
+        </div>
+        <div>
+            <input type="checkbox" id="cat-SPORTS" name="categories" value="SPORTS" />
+            <label for="cat-SPORTS">Sports</label>
+        </div>
+    </div>
+    <button onclick="register()">Register</button>
+    <p>Already have an account? <a href="login.html">Login here</a></p>
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum</title>
+    <script>
+        async function loadPosts() {
+
+            const TOKEN = localStorage.getItem("token");
+
+            if (!TOKEN) {
+                window.location.href = "login.html";
+            }
+
+            try {
+                const response = await fetch("http://localhost:8080/api/forum/posts", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${TOKEN}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const posts = await response.json();
+
+                const postsContainer = document.getElementById("posts");
+                postsContainer.innerHTML = posts.map(post => `
+          <div class="post">
+            <h2>${post.title}</h2>
+            <p>${post.content}</p>
+            <p><i>Posted by: ${post.username}</i></p>
+            <p><i>Created at: ${new Date(post.createdAt).toLocaleString()}</i></p>
+            <a href="post.html?id=${post.id}">Read more</a>
+          </div>
+        `).join('');
+            } catch (error) {
+                console.error("Error loading posts:", error);
+            }
+        }
+
+        window.onload = loadPosts;
+    </script>
+</head>
+
+<body>
+    <h1>Forum</h1>
+    <div id="posts"></div>
+    <a href="createPost.html">Test</a>
+    <button onclick="window.location.href='home.html'">Back to Home</button>
+</body>
+
+</html>

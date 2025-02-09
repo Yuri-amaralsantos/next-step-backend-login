@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <script>
+        const API_PROFILE_URL = "http://localhost:8080/api/users/profile";
+        const TOKEN = localStorage.getItem("token");
+
+        if (!TOKEN) {
+            window.location.href = "login.html";
+        }
+
+        async function fetchProfile() {
+            try {
+                const response = await fetch(API_PROFILE_URL, {
+                    headers: { "Authorization": `Bearer ${TOKEN}` }
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    document.getElementById("username").textContent = user.username;
+                    document.getElementById("email").textContent = user.email;
+                    document.getElementById("categories").textContent = user.categories.join(", ");
+                } else {
+                    alert("Failed to load profile.");
+                    window.location.href = "login.html";
+                }
+            } catch (error) {
+                console.error("Error fetching profile:", error);
+            }
+        }
+
+        function logoff() {
+            localStorage.removeItem("token");
+            window.location.href = "login.html";
+        }
+
+        document.addEventListener("DOMContentLoaded", fetchProfile);
+    </script>
+</head>
+
+<body>
+    <h1>Profile</h1>
+    <p><strong>Username:</strong> <span id="username"></span></p>
+    <p><strong>Email:</strong> <span id="email"></span></p>
+    <p><strong>Categories:</strong> <span id="categories"></span></p>
+
+    <button onclick="window.location.href='home.html'">Back to Home</button>
+    <button onclick="window.location.href='settings.html'">Edit Profile</button>
+    <button onclick="logoff()">Log Out</button>
+</body>
+
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const TOKEN = localStorage.getItem("token");
+            const authLinks = document.getElementById("auth-links");
+
+            if (TOKEN) {
+                // User is logged in
+                authLinks.innerHTML = `
+                    <a href="profile.html">Profile</a> |
+                    <a href="settings.html">Settings</a> |
+                    <a href="Forum.html">Forum</a> |
+                    <a href="#" onclick="logout()">Log out</a>
+                `;
+            } else {
+                // User is not logged in
+                authLinks.innerHTML = `
+                    <a href="login.html">Login</a> |
+                    <a href="register.html">Register</a>
+                `;
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem("token");
+            window.location.href = "home.html";
+        }
+
+        // Search function to view a user's posts
+        function searchUserPosts() {
+            const username = document.getElementById('username').value;
+            if (username) {
+                window.location.href = `user_posts.html?username=${username}`;
+            } else {
+                alert('Please enter a username.');
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Welcome to the Home Page</h1>
+    <nav id="auth-links"></nav>
+
+
+</body>
+
+</html>

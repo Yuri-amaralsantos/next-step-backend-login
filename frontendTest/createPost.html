@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Post</title>
+    <script>
+        async function createPost() {
+            const title = document.getElementById("title").value;
+            const content = document.getElementById("content").value;
+
+            const response = await fetch("http://localhost:8080/api/forum/posts", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                },
+                body: JSON.stringify({ title, content })
+            });
+
+            if (response.ok) {
+                alert("Post created successfully!");
+                window.location.href = "forum.html";
+            } else {
+                const result = await response.json();
+                alert(result.error || "Failed to create post.");
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Create a New Post</h1>
+    <input type="text" id="title" placeholder="Title" required>
+    <textarea id="content" placeholder="Content" required></textarea>
+    <button onclick="createPost()">Create Post</button>
+    <a href="forum.html">Back to Forum</a>
+</body>
+
+</html>
